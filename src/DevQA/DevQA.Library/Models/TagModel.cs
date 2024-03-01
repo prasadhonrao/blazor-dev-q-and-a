@@ -1,7 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-
-namespace DevQA.Library.Models;
+﻿namespace DevQA.Library.Models;
 
 public class TagModel
 {

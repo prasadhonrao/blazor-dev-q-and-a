@@ -12,7 +12,7 @@ public class QuestionModel
     public List<TagModel> Tags { get; set; } = new();
     public StatusModel Status { get; set; } = new();
     public HashSet<string> UserVotes { get; set; } = new(); 
-    public string Notes { get; set; } = "";
+    public string AdminNotes { get; set; } = "";
     public bool ApprovedForRelease { get; set; } = false;
     public bool Archived { get; set; } = false;
     public bool Rejected { get; set; } = false;

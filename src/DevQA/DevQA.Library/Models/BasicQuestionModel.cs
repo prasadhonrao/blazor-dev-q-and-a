@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace DevQA.Library.Models;
+﻿namespace DevQA.Library.Models;
 public class BasicQuestionModel
 {
     [BsonId]
