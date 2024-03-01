@@ -1,0 +1,98 @@
+# Feature List for Dev Q&A App
+
+- User authentication
+  - Sign up
+  - Log in
+  - Log out
+- User authorization
+  - How to handle user and admin role?
+- Identity providers
+  - Azure AD B2C
+  - Google
+  - Facebook
+  - Twitter
+  - GitHub
+  - LinkedIn
+- Rate limiting
+  - How many questions a user can ask in a day?
+- Logging
+- Error handling
+- Caching
+- Offensive content filtering
+  - How to do it?
+- Landing page
+  - Show latest question
+  - Display total number of questions
+  - Display total number of upvotes and downvotes
+  - Link to post a question
+  - Search question
+  - Sort question
+  - Filter question
+  - Upvote question
+  - Downvote question
+- Ask question page
+  - Title
+  - Description
+  - Tag question (max 5 tags)
+  - Link to post a question
+  - Link to cancel a question
+  - Limit the number of tags
+  - Limit the number of characters in the title
+  - Limit the number of characters in the description
+- Question detail page
+  - Show question details
+  - Show all the answers sorted by votes and then date
+  - Show all the comments
+  - Show all the tags
+  - Link to post an answer
+  - Link to post a comment
+  - Link to report question
+  - Link to report answer
+  - Link to report comment
+  - Link to edit question
+  - Link to delete question
+  - Link to close question
+  - Link to archive question
+  - Link to tag question
+  - Link to edit tags on question
+  - Link to remove tags from question
+  - Link to edit answer
+  - Link to delete answer
+  - Link to edit comment
+  - Link to delete comment
+  - Link to upvote question
+  - Link to downvote question
+  - Link to upvote answer
+  - Link to downvote answer
+- User page
+  - Show all the questions asked by the user
+  - Show all the answers given by the user
+  - Show all the questions voted by the user
+  - Display total number of upvotes and downvotes
+  - Edit a question (only the owner of the question)
+- Admin page
+  - Approve or reject a question
+  - Archive questions
+  - Close a question
+  - Delete a question
+  - Edit a question
+  - Add status to a question
+  - Update status of a question
+  - Add tags to a question
+  - Remove tags from a question
+  - Edit tags on a question
+  - Note section while changing the status of a question
+  - How to notify user when question status gets changed?
+- Technology
+  - Blazor Server
+  - Do we need WebAssembly?
+  - Do we need an API?
+  - How to extend it to additional clients like React, MAUI?
+  - How to convert it to a mobile app?
+  - Design using Bootstrap / Tailwind?
+  - Offline support using PWA?
+  - JS / NPM packages integration - Toastr
+  - How to notify to the user in case of mobile app?
+  - CI / CD using GitHub Actions or ADO?
+  - Azure deployment
+  - Do we need to containerize it using Docker / Kubernetes?
