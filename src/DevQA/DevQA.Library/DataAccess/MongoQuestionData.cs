@@ -73,31 +73,47 @@ public class MongoQuestionData : IQuestionData
 
     public async Task UpvoteQuestion(string questionId, string userId)
     {
-        var question = await GetQuestionByIdAsync(questionId);
-        if (question is null)
+        using (var session = await questions.Database.Client.StartSessionAsync())
         {
-            throw new Exception("Question not found");
-        }
-        bool isUpvote = question.UserVotes.Add(userId);
-        if (isUpvote == false)
-        {
-            question.UserVotes.Remove(userId);
-        }
-        await UpdateQuestionAsync(questionId, question);
+            session.StartTransaction();
 
-        var user = await userData.GetUserByIdAsync(question.User.Id);
-        if (isUpvote)
-        {
-            user.VotedQuestions.Add(new BasicQuestionModel(question));
-        }
-        else
-        {
-            var questionToRemove = user.VotedQuestions.Where(q => q.Id == question.Id).First();
-            user.VotedQuestions.Remove(questionToRemove);
-        }
-        await userData.UpdateUserAsync(user.Id, user);
+            try
+            {
+                var question = await GetQuestionByIdAsync(questionId);
+                if (question is null)
+                {
+                    throw new Exception("Question not found");
+                }
 
-        memoryCache.Remove(cacheKey);
+                bool isUpvote = question.UserVotes.Add(userId);
+                if (isUpvote == false)
+                {
+                    question.UserVotes.Remove(userId);
+                }
+                await UpdateQuestionAsync(questionId, question);
+
+                var user = await userData.GetUserByIdAsync(userId);
+                if (isUpvote)
+                {
+                    user.VotedQuestions.Add(new BasicQuestionModel(question));
+                }
+                else
+                {
+                    var questionToRemove = user.VotedQuestions.Where(q => q.Id == question.Id).First();
+                    user.VotedQuestions.Remove(questionToRemove);
+                }
+                await userData.UpdateUserAsync(user.Id, user);
+
+                await session.CommitTransactionAsync();
+
+                memoryCache.Remove(cacheKey);
+            }
+            catch (Exception)
+            {
+                await session.AbortTransactionAsync();
+                throw;
+            }
+        }
     }
 
     public async Task<QuestionModel> CreateQuestionAsync(QuestionModel question)
