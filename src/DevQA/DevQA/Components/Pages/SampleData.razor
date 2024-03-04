@@ -1,0 +1,224 @@
+﻿@page "/sampledata"
+@rendermode InteractiveServer
+
+@inject ITagData tagData
+@inject IQuestionData questionData
+@inject IStatusData statusData
+@inject IUserData userData
+
+<h2>Load Sample Data</h2>
+
+@if (tagsCreated)
+{
+    <p>Tags Created</p>
+}
+else
+{
+    <button @onclick="createTags">Create Tags</button>
+}
+
+@if (statusesCreated)
+{
+    <p>Statuses Created</p>
+}
+else
+{
+    <button @onclick="createStatuses">Create Statuses</button>
+}
+
+@if (usersCreated)
+{
+    <p>User Data Created</p>
+}
+else
+{
+    <button @onclick="createUsers">Create User Data</button>
+}
+
+@if (questionsCreated)
+{
+    <p>Questions Data Created</p>
+}
+else
+{
+    <button @onclick="createQuestions">Create Questions Data</button>
+}
+
+@code {
+    bool tagsCreated = false;
+    bool statusesCreated = false;
+    bool usersCreated = false;
+    bool questionsCreated = false;
+
+    private async Task createTags()
+    {
+        var tags = await tagData.GetAllTagsAsync();
+        if (tags?.Count > 0)
+        {
+            tagsCreated = true;
+            return;
+        }
+
+        Dictionary<string, string> newTags = new()
+        {
+            { "C#", "C# is a programming language" },
+            { "JavaScript", "JavaScript is a programming language" },
+            { "HTML", "HTML is a markup language" },
+            { "CSS", "CSS is a style sheet language" },
+            { "SQL", "SQL is a query language" },
+            { "Python", "Python is a programming language" },
+            { "Java", "Java is a programming language" }
+        };
+
+        foreach (var tag in newTags)
+        {
+            TagModel newTag = new()
+                {
+                    Name = tag.Key,
+                    Description = tag.Value
+                };
+            await tagData.CreateTagAsync(newTag);
+        }
+
+        tagsCreated = true;
+    }
+
+    private async Task createStatuses()
+    {
+        var statuses = await statusData.GetAllStatusesAsync();
+        if (statuses?.Count > 0)
+        {
+            statusesCreated = true;
+            return;
+        }
+
+        Dictionary<string, string> newStatuses = new()
+        {
+            { "Open", "Open" },
+            { "Closed", "Closed" },
+            { "On Hold", "On Hold" },
+            { "Duplicate", "Duplicate" },
+            { "Answered", "Answered" },
+            { "Approved", "Approved" },
+            { "Rejected", "Rejected" }
+        };
+        foreach (var status in newStatuses)
+        {
+            StatusModel newStatus = new()
+                {
+                    Name = status.Key,
+                    Description = status.Value
+                };
+            await statusData.CreateStatusAsync(newStatus);
+        }
+
+        statusesCreated = true;
+
+    }
+
+    private async Task createUsers()
+    {
+        var users = await userData.GetAllUsersAsync();
+        if (users?.Count > 0)
+        {
+            usersCreated = true;
+            return;
+        }
+
+        List<UserModel> newUsers = new()
+            {
+                new UserModel
+                {
+                    FirstName = "John",
+                    LastName = "Doe",
+                    Email = "John.Doe@Email.com",
+                    DisplayName = "John Doe",
+                    ObjectIdentifier = "abc-123"
+                },
+                new UserModel
+                {
+                    FirstName = "Prasad",
+                    LastName = "Honrao",
+                    Email = "Prasad.Honrao@Email.com",
+                    DisplayName = "Prasad Honrao",
+                    ObjectIdentifier = "abc-123456"
+                }
+        };
+        foreach (var user in newUsers)
+        {
+            await userData.CreateUserAsync(user);
+        }
+    }
+
+    private async Task createQuestions()
+    {
+        var questions = await questionData.GetAllQuestionsAsync();
+        if (questions?.Count > 0)
+        {
+            questionsCreated = true;
+            return;
+        }
+
+        var prasad = await userData.GetUserByObjectIdentifierAsync("abc-123456");
+        var john = await userData.GetUserByObjectIdentifierAsync("abc-123");
+        var csharpTag = await tagData.GetTagByNameAsync("C#");
+        var cssTag = await tagData.GetTagByNameAsync("CSS");
+        var jsTag = await tagData.GetTagByNameAsync("JavaScript");
+        var statuses = await statusData.GetAllStatusesAsync();
+        var openStatus = await statusData.GetStatusByNameAsync("Open");
+
+        HashSet<string> votes = new();
+        votes.Add(prasad.Id);
+        votes.Add(john.Id);
+
+        QuestionModel newQuestion = new()
+            {
+                Title = "Difference between event and delegate in C#?",
+                Description = "Explain the difference between event and delegate with an example",
+                Tags = new() { csharpTag },
+                User = new BasicUserModel(prasad),
+                UserVotes = votes,
+                Status = openStatus
+            };
+
+        await questionData.CreateQuestionWithoutTransactionAsync(newQuestion);
+
+        QuestionModel newQuestion2 = new()
+            {
+                Title = "CSS Specificity",
+                Description = "Explain CSS Specificity",
+                Tags = new() { cssTag },
+                User = new BasicUserModel(john),
+                Status = statuses[0]
+            };
+        await questionData.CreateQuestionWithoutTransactionAsync(newQuestion2);
+
+        QuestionModel newQuestion3 = new()
+            {
+                Title = "JavaScript Prototype Inheritance",
+                Description = "Explain Prototype Inheritance in JavaScript",
+                Tags = new() { jsTag },
+                User = new BasicUserModel(prasad),
+                Status = statuses[1]
+            };
+        await questionData.CreateQuestionWithoutTransactionAsync(newQuestion3);
+
+        QuestionModel newQuestion4 = new()
+            {
+                Title = "SOLID Principles",
+                Description = "Explain SOLID principles",
+                Tags = new() { jsTag, csharpTag, cssTag },
+                User = new BasicUserModel(prasad),
+                Status = openStatus
+            };
+        await questionData.CreateQuestionWithoutTransactionAsync(newQuestion4);
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await createTags();
+        await createStatuses();
+        await createUsers();
+        await createQuestions();
+    }
+}
