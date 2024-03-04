@@ -116,6 +116,20 @@ public class MongoQuestionData : IQuestionData
         }
     }
 
+    public async Task<QuestionModel> CreateQuestionWithoutTransactionAsync(QuestionModel question)
+    {
+        // Add question to QuestionCollection
+        await questions.InsertOneAsync(question);
+
+        // Update UserCollection with the new question
+        var user = await userData.GetUserByIdAsync(question.User.Id);
+        user.Questions.Add(new BasicQuestionModel(question));
+        await userData.UpdateUserAsync(user.Id, user);
+
+        // Not updating the cache here because the question is not approved yet by Admin and will not be displayed
+        return question;
+    }
+
     public async Task<QuestionModel> CreateQuestionAsync(QuestionModel question)
     {
         using (var session = await questions.Database.Client.StartSessionAsync())
